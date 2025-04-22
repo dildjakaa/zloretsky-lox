@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Социальные сети Zloretsky</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: #000;
+            position: relative;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin-bottom: 20px;
+            z-index: 3;
+        }
+
+        .socials-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+            z-index: 3;
+        }
+
+        .button {
+            width: 300px;
+            height: 60px;
+            border-radius: 25px;
+            color: white;
+            background-color: #ff0000;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: visible;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            z-index: 3;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 35px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            animation: auraPulse 2s infinite;
+            z-index: -1;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 25px;
+            background: radial-gradient(rgba(255, 215, 0, 0.2), transparent 70%);
+            filter: blur(8px);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background-color: #cc0000;
+            box-shadow: 0 0 20px gold, inset 0 0 10px rgba(255, 215, 0, 0.4);
+        }
+
+        .button:hover::after {
+            opacity: 0.7;
+        }
+
+        .button img {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+            transition: transform 0.3s ease;
+            object-fit: contain;
+        }
+
+        .button:hover img {
+            transform: rotate(360deg);
+        }
+
+        @keyframes auraPulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.05); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.6; }
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            color: white;
+            font-size: .8em;
+            z-index: 3;
+        }
+
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        #threeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: .7;
+            cursor: pointer;
+            z-index: 2;
+            animation: move 8s infinite linear;
+        }
+
+        @keyframes move {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(100px, 50px); }
+            50% { transform: translate(-80px, 100px); }
+            75% { transform: translate(120px, -50px); }
+            100% { transform: translate(-100px, -100px); }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="threeCanvas"></canvas>
+
+    <h1>Добро пожаловать на мой сайт!</h1>
+
+    <div class="socials-container">
+        <a href="https://t.me/Zloretsky_traffic" class="button" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram">
+            Телеграм @Zloretsky_traffic
+        </a>
+
+        <a href="https://discord.com/users/papadzhi" class="button" target="_blank">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/discord.svg" alt="Discord">
+            Discord @papadzhi
+        </a>
+
+        <a href="https://nursultan.fun/" class="button" target="_blank">
+            Бесплатный Nursultan
+        </a>
+
+        <a href="https://t.me/Penisjsbot" class="button" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="Bot">
+            Связь с ботом @Penisjsbot
+        </a>
+    </div>
+
+    <footer>©2023 Все права защищены.</footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Инициализация космического фона
+        const initThreeJS = () => {
+            try {
+                const canvas = document.getElementById('threeCanvas');
+                const renderer = new THREE.WebGLRenderer({ 
+                    canvas,
+                    alpha: true,
+                    antialias: true
+                });
+                
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+                
+                // Создание звезд
+                const starsGeometry = new THREE.BufferGeometry();
+                const starsMaterial = new THREE.PointsMaterial({
+                    color: 0xFFFFFF,
+                    size: 0.7,
+                    transparent: true
+                });
+
+                const starVertices = [];
+                for(let i = 0; i < 10000; i++) {
+                    starVertices.push(
+                        THREE.MathUtils.randFloatSpread(2000),
+                        THREE.MathUtils.randFloatSpread(2000),
+                        THREE.MathUtils.randFloatSpread(2000)
+                    );
+                }
+
+                starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+                const starField = new THREE.Points(starsGeometry, starsMaterial);
+                scene.add(starField);
+
+                camera.position.z = 100;
+
+                // Анимация
+                const animate = () => {
+                    requestAnimationFrame(animate);
+                    starField.rotation.x += 0.0001;
+                    starField.rotation.y += 0.0001;
+                    renderer.render(scene, camera);
+                };
+
+                // Ресайз
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                animate();
+            } catch (error) {
+                console.error('Three.js Error:', error);
+            }
+        };
+
+        // Инициализация шаров
+        const initCircles = () => {
+            let popCount = 0;
+
+            const createCircle = () => {
+                const circle = document.createElement('div');
+                circle.className = 'circle';
+                
+                const size = Math.random() * 80 + 20;
+                const initialX = Math.random() * 90 + 5;
+                const initialY = Math.random() * 90 + 5;
+                
+                circle.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: rgba(255,255,255,${Math.random() * 0.7 + 0.3});
+                    left: ${initialX}%;
+                    top: ${initialY}%;
+                `;
+
+                circle.addEventListener('click', () => {
+                    popCount++;
+                    circle.remove();
+                    createCircle();
+
+                    if (popCount === 15) {
+                        window.open('https://parad1st.github.io/Screamer/', '_blank');
+                    }
+
+                    const burst = document.createElement('div');
+                    burst.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: rgba(255,255,255,0.8);
+                        border-radius: 50%;
+                        left: ${initialX}%;
+                        top: ${initialY}%;
+                        animation: explode 0.3s ease-out;
+                    `;
+
+                    document.body.appendChild(burst);
+                    setTimeout(() => burst.remove(), 300);
+                });
+
+                document.body.appendChild(circle);
+            };
+
+            for (let i = 0; i < 30; i++) createCircle();
+        };
+
+        // Запуск
+        window.addEventListener('load', () => {
+            initThreeJS();
+            initCircles();
+        });
+    </script>
+</body>
+</html>
